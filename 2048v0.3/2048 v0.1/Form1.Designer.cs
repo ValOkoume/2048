@@ -119,6 +119,8 @@ namespace _2048_v0._1
             // labelcompteur
             // 
             this.labelcompteur.AutoSize = true;
+            this.labelcompteur.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.labelcompteur.ForeColor = System.Drawing.SystemColors.ControlText;
             this.labelcompteur.Location = new System.Drawing.Point(13, 81);
             this.labelcompteur.Name = "labelcompteur";
             this.labelcompteur.Size = new System.Drawing.Size(0, 13);

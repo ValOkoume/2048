@@ -115,7 +115,7 @@ namespace _2048_v0._1
                 }
 
             Label lblfond = new Label();
-            lblfond.BackColor = Color.Black;
+            lblfond.BackColor = Color.Transparent;
             lblfond.Bounds = new Rectangle(755, 293, 431, 431); //la moitié de l'écran -205
             lblfond.SendToBack();
             Controls.Add(lblfond);
