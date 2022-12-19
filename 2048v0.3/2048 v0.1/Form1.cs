@@ -13,7 +13,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 //Fichier 2048_V01._1.Form1
 //Auteur Valentin Maurer
 //Date de création 14.11.2022
-//Dernière modif 07.12.2022
+//Dernière modif 19.12.2022
 //Description : Création d'un jeu similaire au 2048
 
 
@@ -23,15 +23,17 @@ namespace _2048_v0._1
 {
     public partial class Form1 : Form
     {
+        //Tableau de 4 lignes 4 colonnes
+        Label[,] lbl = new Label[4, 4];
 
-        Label[,] lbl = new Label[4, 4]; //Tableau de 4 lignes 4 colonnes
-        int[,] aJeu = new int[,] { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } }; //Initalise avec la valeur 0
-        int deplacement = 0;
+        //Initalise avec la valeur 0
+        int[,] aJeu = new int[,] { { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 } };
 
+        //Déclaration en bool pour fonction gagner 
+        bool gagner = false;
 
         //Fonction de renvoi des résultats et des tassements 
         private int[] renvoi(int a, int b, int c, int d, out int compteur)
-
         {
             int[] resultat = new int[4];
             compteur = 0;
@@ -39,12 +41,12 @@ namespace _2048_v0._1
             if (c == 0)
             {
                 if (d != 0) compteur++;
-                             
+
                 c = d;
                 d = 0;
-                
+
             }
-            if (b == 0) 
+            if (b == 0)
             {
                 if (c != 0 || d != 0) compteur++;
                 b = c;
@@ -82,7 +84,6 @@ namespace _2048_v0._1
             }
 
             //renvoie des valeurs selon la table
-
             resultat[0] = a;
             resultat[1] = b;
             resultat[2] = c;
@@ -91,7 +92,7 @@ namespace _2048_v0._1
             return resultat;
 
         }
-  
+
         //Initalise le tableau avec sa taille et ses différentes caractéristiques 
         public Form1()
         {
@@ -104,7 +105,7 @@ namespace _2048_v0._1
 
                 {
                     lbl[lig, col] = new Label(); //création du label
-                    lbl[lig, col].Bounds = new Rectangle(110 + 100 * col, 180 + 100 * lig, 90, 90);
+                    lbl[lig, col].Bounds = new Rectangle(775 + 100 * col, 315 + 100 * lig, 90, 90);
                     lbl[lig, col].TextAlign = ContentAlignment.MiddleCenter;
                     lbl[lig, col].Font = new Font("Arial", 20);
                     lbl[lig, col].BackColor = Color.FromArgb(0, 255, 255);
@@ -114,13 +115,14 @@ namespace _2048_v0._1
                 }
 
             Label lblfond = new Label();
-            lblfond.BackColor = Color.FromArgb(153, 255, 153);
-            lblfond.Bounds = new Rectangle(100, 170, 410, 410);
+            lblfond.BackColor = Color.Black;
+            lblfond.Bounds = new Rectangle(755, 293, 431, 431); //la moitié de l'écran -205
             lblfond.SendToBack();
             Controls.Add(lblfond);
         }
 
-        private void display() //Boucle pour afficher le contenu du tableau et établir les commandes 
+        //Boucle pour afficher le contenu du tableau et établir les commandes 
+        private void display()
         {
             for (int lig = 0; lig < 4; lig++)
             {
@@ -170,74 +172,76 @@ namespace _2048_v0._1
             }
 
         }
+        //Fonction check list
+        List<int> checklist()
+        {
+            List<int> maliste = new List<int>();
+            for (int ligne = 0; ligne < 4; ligne++)
+            {
+                for (int colonne = 0; colonne < 4; colonne++)
+                {
+                    if (aJeu[ligne, colonne] == 0) maliste.Add(ligne * 4 + colonne);
+                }
+            }
+            return maliste;
+        }
+
+        //Fonctione pour ajouter une tuile supplémentaire lors d'un déplacement
+        void addtile()
+        {
+            List<int> maliste = new List<int>();
+            var rand = new Random();
+            maliste = checklist();
+
+            //Créer le random
+
+            int randoml = rand.Next(maliste.Count);
+            int randomv = rand.Next(4);
+
+            if (randomv == 0)
+            {
+                aJeu[maliste[randoml] / 4, maliste[randoml] % 4] = 4;
+            }
+            else
+            {
+                aJeu[maliste[randoml] / 4, maliste[randoml] % 4] = 2;
+            }
+        }
+
         //Bouton fermer 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            //Initalisation du jeu avec 8 Valeurs afin de les tasser dans toute les directions. 
-            aJeu[0, 0] = 2;
-            aJeu[0, 1] = 2;
-            aJeu[0, 2] = 0;
-            aJeu[0, 3] = 0;
-            aJeu[1, 0] = 2;
-            aJeu[1, 1] = 2;
-            aJeu[1, 2] = 0;
-            aJeu[1, 3] = 0;
+            //Initalisation du jeu avec 2 Valeurs de 2 afin de commencer la partie 
+            addtile();
+            addtile();
+
+
+            //Initialisation du jeu avec 2x1024 et tableau quasi plein pour test par M.Chavey. 
+            aJeu[0, 0] = 8;
+            aJeu[0, 1] = 16;
+            aJeu[0, 2] = 8;
+            aJeu[0, 3] = 16;
+            aJeu[1, 0] = 32;
+            aJeu[1, 1] = 64;
+            aJeu[1, 2] = 128;
+            aJeu[1, 3] = 128;
             aJeu[2, 0] = 4;
             aJeu[2, 1] = 8;
-            aJeu[2, 2] = 0;
-            aJeu[2, 3] = 0;
-            aJeu[3, 0] = 2;
-            aJeu[3, 1] = 2;
-            aJeu[3, 2] = 0;
-            aJeu[3, 3] = 0;
+            aJeu[2, 2] = 512;
+            aJeu[2, 3] = 32;
+            aJeu[3, 0] = 64;
+            aJeu[3, 1] = 128;
+            aJeu[3, 2] = 1024;
+            aJeu[3, 3] = 1024;
+
             display();
 
-        }
-        //Fonction test pour tassement 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            int compteur = 0;
-            int[] Tresult = renvoi(Int32.Parse(valeura.Text), Int32.Parse(valeurb.Text), Int32.Parse(valeurc.Text), Int32.Parse(valeurd.Text), out compteur);
-            Rtasse.Text = Tresult[0].ToString() + " " + Tresult[1].ToString() + " " + Tresult[2].ToString() + " " + Tresult[3].ToString();
-        }
-
-        //Activer désactiver la fonction test
-        private void activerDésactiverTesterToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (button1.Enabled)
-            {
-                button1.Enabled = false;
-                valeura.Enabled = false;
-                valeurb.Enabled = false;
-                valeurc.Enabled = false;
-                valeurd.Enabled = false;
-                Rtasse.Enabled = false;
-            }
-            else
-            {
-                button1.Enabled = true;
-                valeura.Enabled = true;
-                valeurb.Enabled = true;
-                valeurc.Enabled = true;
-                valeurd.Enabled = true;
-                Rtasse.Enabled = true;
-            }
         }
 
         //Fonction et boucle pour attraper les touches + déplacer les résultats et afficher. + compteur
@@ -251,104 +255,168 @@ namespace _2048_v0._1
                 case Keys.A:
                     for (int ligne = 0; ligne < 4; ligne++)
                     {
-                        int[] Tresult = renvoi(aJeu[ligne,0], aJeu[ligne,1], aJeu[ligne, 2], aJeu[ligne,3], out compteur);
+                        int[] Tresult = renvoi(aJeu[ligne, 0], aJeu[ligne, 1], aJeu[ligne, 2], aJeu[ligne, 3], out compteur);
                         aJeu[ligne, 0] = Tresult[0];
                         aJeu[ligne, 1] = Tresult[1];
                         aJeu[ligne, 2] = Tresult[2];
                         aJeu[ligne, 3] = Tresult[3];
-                        compteur2 += compteur;                      
+                        compteur2 += compteur;
+
+
                     }
                     break;
                 case Keys.D:
                     for (int ligne = 0; ligne < 4; ligne++)
                     {
-                        int[] Tresult = renvoi(aJeu[ligne, 3], aJeu[ligne, 2], aJeu[ligne, 1], aJeu[ligne, 0],out compteur);
+                        int[] Tresult = renvoi(aJeu[ligne, 3], aJeu[ligne, 2], aJeu[ligne, 1], aJeu[ligne, 0], out compteur);
                         aJeu[ligne, 3] = Tresult[0];
                         aJeu[ligne, 2] = Tresult[1];
                         aJeu[ligne, 1] = Tresult[2];
                         aJeu[ligne, 0] = Tresult[3];
                         compteur2 += compteur;
+
                     }
                     break;
                 case Keys.S:
                     for (int colonne = 0; colonne < 4; colonne++)
                     {
-                        int[] Tresult = renvoi(aJeu[3, colonne], aJeu[2, colonne], aJeu[1, colonne], aJeu[0, colonne],out compteur);
+                        int[] Tresult = renvoi(aJeu[3, colonne], aJeu[2, colonne], aJeu[1, colonne], aJeu[0, colonne], out compteur);
                         aJeu[3, colonne] = Tresult[0];
                         aJeu[2, colonne] = Tresult[1];
                         aJeu[1, colonne] = Tresult[2];
                         aJeu[0, colonne] = Tresult[3];
                         compteur2 += compteur;
+
                     }
 
                     break;
                 case Keys.W:
                     for (int colonne = 0; colonne < 4; colonne++)
                     {
-                        int[] Tresult = renvoi(aJeu[0, colonne], aJeu[1, colonne], aJeu[2, colonne], aJeu[3, colonne],out compteur);
+                        int[] Tresult = renvoi(aJeu[0, colonne], aJeu[1, colonne], aJeu[2, colonne], aJeu[3, colonne], out compteur);
                         aJeu[0, colonne] = Tresult[0];
                         aJeu[1, colonne] = Tresult[1];
                         aJeu[2, colonne] = Tresult[2];
                         aJeu[3, colonne] = Tresult[3];
                         compteur2 += compteur;
+
                     }
                     break;
-
             }
-
-            //Création du tableau pour pouvoir randomiser l'affichage de 2^1 et 2^2
-
-
-            //Possible génération random du nombre 
-            //Positionner aléatoirement en début de partie 2^1
-            //aJeu[RandomPos(), RandomPos()] = 2; // != 1 ? 2 : 4; // 3/4 chance pour avoir 2, 1/4 chance pour avoir 4
-
-            private int RandomPos()
+            if (compteur2 != 0)
             {
-                var rand = new Random();
-                return rand.Next(4);
+                addtile();
             }
+            display();
 
-            void addtile()
+            //Bool true, pour avoir le message box qui ne s'affiche qu'à la première itération de "2048"
+            //Aide par Maïkol pour la compréhension du système de BOOL (écriture de la fonction perso)
+            if (!gagner)
             {
-                List<int> maliste = new List<int>();
-                int compteur_liste = 0;
-
                 for (int ligne = 0; ligne < 4; ligne++)
                 {
                     for (int colonne = 0; colonne < 4; colonne++)
                     {
-                        if (aJeu[ligne, colonne] != 0) maliste.Add(aJeu[ligne, colonne]);
+                        if (aJeu[ligne, colonne] == 2048)
+                        {
+                            MessageBox.Show("BRAVO VOUS AVEZ GAGNE");
+                            gagner = true;
+                        }
                     }
-                    compteur_liste++;
+                }
+            }
+            //Appelle fonction perdu et affichage du message perdu, check du tableau si valeur == 0 et qu'aucun déplacement n'est possible 
+            //Aide pour la fonction perdu par Mathieu. Et débug par Maïkol 
+
+            int perdu1 = 0;
+            List<int> listeperdu = checklist();
+
+            if (listeperdu.Count == 0)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (perdu(aJeu[0, i], aJeu[1, i], aJeu[2, i], aJeu[3, i]))
+                    {
+                        perdu1++;
+                    }
+                    if (perdu(aJeu[i, 0], aJeu[i, 1], aJeu[i, 2], aJeu[i, 3]))
+                    {
+                        perdu1++;
+                    }
+                }
+                if (perdu1 == 0)
+                {
+                    MessageBox.Show("VOUS AVEZ PERDU");
                 }
 
-
-               
-
-                   
             }
 
-            void btnRemplitListe_Click(object sender, EventArgs e)
-            {
-                //Ajouter à la liste tous les éléments non nuls du tableau
-
-            }
-
-            void btnAfficheListe_Click(object sender, EventArgs e)
-            {
-                //Afficher toute la liste mémoire dans la listbox (avec effacement au début)
-                lstListe.Items.Clear();
-                foreach (int i in maliste)
-                    lstListe.Items.Add(i);
-            }
-
-
-
-
-
-            display();
+            //Label pour afficher le nombre de déplacement 
             labelcompteur.Text = "Votre nombre de déplacement " + compteur2.ToString();
+
+        }
+        //Fonction perdu, return true ou false selon conditions 
+        bool perdu(int a, int b, int c, int d)
+
+        {
+            int compteur = 0;
+            if (a == b && a != 0)
+            {
+                compteur++;
+
+            }
+            if (b == c && b != 0)
+            {
+                compteur++;
+
+            }
+            if (c == d && c != 0)
+            {
+                compteur++;
+            }
+            if (compteur == 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        //Credit du jeu
+        private void creditsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Ce jeu a été crée par Valentin Maurer dans le cadre du CPNV");
+        }
+
+        private void optionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Version du jeu
+        private void versionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Version 0.3");
+        }
+
+        private void fileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Bouton nouvelle partie. Clear le tableau puis placer 2 nouvelles tuiles 
+        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            for (int ligne = 0; ligne < 4; ligne++)
+            {
+                for (int colonne = 0; colonne < 4; colonne++)
+                {
+                    aJeu[ligne, colonne] = 0;
+                }
+            }
+            addtile();
+            addtile();
+            display();
         }
     }
 }
