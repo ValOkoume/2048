@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-//Fichier 2048_V01._1.Form1
+//Fichier 2048_V03._1.Form1
 //Auteur Valentin Maurer
 //Date de création 14.11.2022
 //Dernière modif 19.12.2022
@@ -107,11 +107,12 @@ namespace _2048_v0._1
                     lbl[lig, col] = new Label(); //création du label
                     lbl[lig, col].Bounds = new Rectangle(775 + 100 * col, 315 + 100 * lig, 90, 90);
                     lbl[lig, col].TextAlign = ContentAlignment.MiddleCenter;
-                    lbl[lig, col].Font = new Font("Arial", 20);
-                    lbl[lig, col].BackColor = Color.FromArgb(0, 255, 255);
+                    lbl[lig, col].Font = new Font("outrun future", 20);
+                    lbl[lig, col].BackColor = Color.Transparent;
                     lbl[lig, col].Text = "-";
-                    lbl[lig, col].ForeColor = Color.White;
+                    lbl[lig, col].ForeColor = Color.Black;
                     Controls.Add(lbl[lig, col]); //Ajoute le bouton lblUnique
+                    lbl[lig, col].BringToFront();
                 }
 
             Label lblfond = new Label();
@@ -172,7 +173,7 @@ namespace _2048_v0._1
             }
 
         }
-        //Fonction check list
+        //Fonction check list, enregistre les cases libres dans un tableau
         List<int> checklist()
         {
             List<int> maliste = new List<int>();
@@ -186,7 +187,7 @@ namespace _2048_v0._1
             return maliste;
         }
 
-        //Fonctione pour ajouter une tuile supplémentaire lors d'un déplacement
+        //Fonction pour ajouter une tuile supplémentaire lors d'un déplacement
         void addtile()
         {
             List<int> maliste = new List<int>();
@@ -325,7 +326,7 @@ namespace _2048_v0._1
                     }
                 }
             }
-            //Appelle fonction perdu et affichage du message perdu, check du tableau si valeur == 0 et qu'aucun déplacement n'est possible 
+            //Appelle fonction checklist,check du tableau si valeur == 0, affiche le message perdu et qu'aucun déplacement n'est possible 
             //Aide pour la fonction perdu par Mathieu. Et débug par Maïkol 
 
             int perdu1 = 0;
@@ -355,7 +356,7 @@ namespace _2048_v0._1
             labelcompteur.Text = "Votre nombre de déplacement " + compteur2.ToString();
 
         }
-        //Fonction perdu, return true ou false selon conditions 
+        //Fonction perdu, return true ou false. Renvoi vrai si toutes les cases sont prises et pas de doublon
         bool perdu(int a, int b, int c, int d)
 
         {
@@ -417,6 +418,16 @@ namespace _2048_v0._1
             addtile();
             addtile();
             display();
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            pictureBox1.SendToBack();
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
